@@ -24,3 +24,10 @@ testLCD:
 	$(copier) -O ihex -R .eeprom main.bin main.hex 
 	sudo $(flash) $(flashOptions)
 	rm main.bin main.hex main.o
+
+testTimer:
+	$(cc) $(options) uart.c timer.c timerTest.c -o main.o
+	$(cc) -o main.bin main.o 
+	$(copier) -O ihex -R .eeprom main.bin main.hex 
+	sudo $(flash) $(flashOptions)
+	rm main.bin main.hex main.o
