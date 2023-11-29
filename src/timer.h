@@ -8,14 +8,18 @@
 #define TIMER_MODE_COUNT 1
 
 #define TIMER_CTRlA 0 
-#define TIMER_CMPAH 1
-#define TIMER_CMPAL 2 
-#define TIMER_CMPBH 3
-#define TIMER_CMPBL 4 
-#define TIMER_INTMASK 5
-#define TIMER_INTFLAG 6
+#define TIMER_CMPA 1
+#define TIMER_CMPB 2
+#define TIMER_INTMASK 3
 
 #define COMX 6
+
+#define __SFR_8(mem_addr) (volatile uint8_t *)(mem_addr)
+#define __SFR_16(mem_addr) (volatile uint16_t *)(mem_addr)
+
+#define TIMER1_CMPA __SFR_16(0x88)
+#define TIMER1_CMPB __SFR_16(0x8A)
+
 
 typedef enum {
   PRESCALER_NONE = 1,
@@ -24,6 +28,14 @@ typedef enum {
   PRESCALER_256,
   PRESCALER_1024
 } timer_prescaler;
+
+
+static volatile uint8_t* TIMER_ARRAY[][7] = 
+  //Ctrl         ,CmpA          ,CmpB          ,IntMsk
+  {{__SFR_8(0x44), __SFR_8(0x47), __SFR_8(0x48), __SFR_8(0x6E)},
+   {__SFR_8(0x80), __SFR_8(0x88), __SFR_8(0x8A), __SFR_8(0x6F)},
+   {__SFR_8(0xB0), __SFR_8(0xB3), __SFR_8(0xB4), __SFR_8(0x70)}};
+
 
 void timerStart(uint8_t timer, 
     uint8_t mode, 
