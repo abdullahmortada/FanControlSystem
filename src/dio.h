@@ -10,26 +10,26 @@
 #define HIGH 1
 #define LOW 0
 
-
-#define PORTB (volatile uint8_t *)0x25
-#define PORTC (volatile uint8_t *)0x28
-#define PORTD (volatile uint8_t *)0x2B
-
-#define DDRB (volatile uint8_t *)0x24
-#define DDRC (volatile uint8_t *)0x27
-#define DDRD (volatile uint8_t *)0x2A
-
-#define PINB (volatile uint8_t *)0x23
-#define PINC (volatile uint8_t *)0x26
-#define PIND (volatile uint8_t *)0x29
-
-#define PCICR (volatile uint8_t *)0x68
-#define PCMSK0 (volatile uint8_t *)0x6B
-#define PCMSK1 (volatile uint8_t *)0x6C
-#define PCMSK2 (volatile uint8_t *)0x6D
-
-
 #define DIO_BITMASK(val, bit) (val<<bit)
+
+#define __SFR_8(mem_addr) (volatile uint8_t *)(mem_addr)
+
+#define PORTB __SFR_8(0x25)
+#define PORTC __SFR_8(0x28)
+#define PORTD __SFR_8(0x2B)
+
+#define DDRB __SFR_8(0x24)
+#define DDRC __SFR_8(0x27)
+#define DDRD __SFR_8(0x2A)
+
+#define PINB __SFR_8(0x23)
+#define PINC __SFR_8(0x26)
+#define PIND __SFR_8(0x29)
+
+#define PCICR __SFR_8(0x68)
+#define PCMSK0 __SFR_8(0x6B)
+#define PCMSK1 __SFR_8(0x6C)
+#define PCMSK2 __SFR_8(0x6D)
 
 
 void dio_SetDirection(volatile uint8_t* reg, uint8_t bit , int8_t direction);

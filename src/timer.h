@@ -17,8 +17,12 @@
 #define __SFR_8(mem_addr) (volatile uint8_t *)(mem_addr)
 #define __SFR_16(mem_addr) (volatile uint16_t *)(mem_addr)
 
+#define TIMER0_CMPA __SFR_8(0x47)
+#define TIMER0_CMPB __SFR_8(0x48)
 #define TIMER1_CMPA __SFR_16(0x88)
 #define TIMER1_CMPB __SFR_16(0x8A)
+#define TIMER2_CMPA __SFR_8(0xB3)
+#define TIMER2_CMPB __SFR_8(0xB4)
 
 
 typedef enum {
