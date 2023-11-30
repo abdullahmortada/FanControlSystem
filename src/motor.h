@@ -10,8 +10,15 @@ typedef enum {
     DIRECTION_CCW
 } tenuDirection;
 
-void DC_Init();
-void DC_Start(unsigned char MotorID, tenuDirection Direction, unsigned char Speed);
-void DC_Stop(unsigned char MotorID);
+struct MOTOR_STRUCT{
+  struct PWM_PIN pin1;
+  struct PWM_PIN pin2;
+};
+
+void motor_Init(struct MOTOR_STRUCT* motor);
+
+void motor_Speed(struct MOTOR_STRUCT* motor, tenuDirection Direction, uint8_t Speed);
+
+void motor_Stop(struct MOTOR_STRUCT* motor);
 
 #endif

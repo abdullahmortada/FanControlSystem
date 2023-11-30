@@ -1,39 +1,69 @@
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <assert.h>
-#include <util/delay.h>
-#include "timer.h"
-#include "uart.h"
+// #include <avr/io.h>
+// #include <avr/interrupt.h>
+// #include <assert.h>
+// #include <util/delay.h>
+// #include "timer.h"
+// #include "uart.h"
 
-uint8_t timer = 1;
-uint8_t channel = 0;
+// uint8_t timer = 1;
+// uint8_t channel = 0;
+//
+// ISR (TIMER1_COMPA_vect)    // Timer1 ISR
+// {
+//   PORTB ^= 1<<5;
+// }
+//
+// int main()
+// {
+//   uart_Init(9600);
+// 	DDRB = (0x01 << PB5);     //Configure the PORTD4 as output
+// 	
+//
+// 	// TCCR1B = (1<<CS10) | (1<<CS12) | (1 << WGM12);  // Timer mode with 1024 prescler
+// 	// TIMSK1 = (1 << OCIE1A) ;   // Enable timer1 overflow interrupt(TOIE1)
+//  //  OCR1A = 15625;               // number of ticks in a second
+//
+//   uint16_t count = F_CPU / 1024;
+//   timerStart(timer, TIMER_MODE_COUNT, channel, PRESCALER_1024, count);
+//   // assert((TCCR1B & (1<<CS10) | (1<<CS12) | (1 << WGM12)) == ((1<<CS10) | (1<<CS12) | (1 << WGM12)));
+//   assert((TIMSK1 & (1 << OCIE1A)) == 2);
+//   PORTB |= 1<<5;
+// 	sei();        // Enable global interrupts by setting global interrupt enable bit in SREG
+// 	
+// 	while(1)
+// 	{
+// 		
+//     _delay_ms(1000);
+//     uart_Transmit('a');
+// 	}
+// }
+//
 
-ISR (TIMER1_COMPA_vect)    // Timer1 ISR
-{
-  PORTB ^= 1<<5;
-}
+#include "pwm.h"
+#include "dio.h"
+#include "util/delay.h"
 
-int main()
-{
-  uart_Init(9600);
-	DDRB = (0x01 << PB5);     //Configure the PORTD4 as output
-	
+int main(){
+  *DDRD |= 1 << 6;
+  while(1){
+    // for (int i = 0; i < 255; i++){
+    // pwm_DutyCycle(PWM_PD6, i);
+    // _delay_ms(100);
+    // }
+    // for (int i = 255; i > 0; i--){
+    // pwm_DutyCycle(PWM_PD6, i);
+    // _delay_ms(100);
+    // }
 
-	// TCCR1B = (1<<CS10) | (1<<CS12) | (1 << WGM12);  // Timer mode with 1024 prescler
-	// TIMSK1 = (1 << OCIE1A) ;   // Enable timer1 overflow interrupt(TOIE1)
- //  OCR1A = 15625;               // number of ticks in a second
-
-  uint16_t count = F_CPU / 1024;
-  timerStart(timer, TIMER_MODE_COUNT, channel, PRESCALER_1024, count);
-  // assert((TCCR1B & (1<<CS10) | (1<<CS12) | (1 << WGM12)) == ((1<<CS10) | (1<<CS12) | (1 << WGM12)));
-  assert((TIMSK1 & (1 << OCIE1A)) == 2);
-  PORTB |= 1<<5;
-	sei();        // Enable global interrupts by setting global interrupt enable bit in SREG
-	
-	while(1)
-	{
-		
+    *PORTB = 0;
     _delay_ms(1000);
-    uart_Transmit('a');
-	}
+    pwm_DutyCycle(PWM_PD6, 0);
+    _delay_ms(1000);
+    pwm_DutyCycle(PWM_PD6, 75);
+    _delay_ms(1000);
+    pwm_DutyCycle(PWM_PD6, 130);
+    _delay_ms(1000);
+    pwm_DutyCycle(PWM_PD6, 200);
+    _delay_ms(1000);
+  }
 }

@@ -14,6 +14,18 @@
 
 #define __SFR_8(mem_addr) (volatile uint8_t *)(mem_addr)
 
+#define PORTB_ADDR (0x25)
+#define PORTC_ADDR (0x28)
+#define PORTD_ADDR (0x2B)
+
+#define DDRB_ADDR (0x24)
+#define DDRC_ADDR (0x27)
+#define DDRD_ADDR (0x2A)
+
+#define PINB_ADDR (0x23)
+#define PINC_ADDR (0x26)
+#define PIND_ADDR (0x29)
+
 #define PORTB __SFR_8(0x25)
 #define PORTC __SFR_8(0x28)
 #define PORTD __SFR_8(0x2B)
@@ -32,10 +44,15 @@
 #define PCMSK2 __SFR_8(0x6D)
 
 
-void dio_SetDirection(volatile uint8_t* reg, uint8_t bit , int8_t direction);
+inline void dio_SetBit(volatile uint8_t* reg, uint8_t bit, uint8_t val){
+  *reg &= ~DIO_BITMASK(1, bit);
+  *reg |= DIO_BITMASK(val, bit);
+}
 
-inline void dio_SetBit(volatile uint8_t* reg, uint8_t bit, uint8_t val);
+inline uint8_t dio_GetBit(volatile uint8_t* reg, uint8_t bit){
+  return ((*reg) >> bit) & 1; //right shift to have value in first bit, then clear other bits
+}
 
-inline uint8_t dio_GetBit(volatile uint8_t* reg, uint8_t bit);
+void dio_SetDirection(volatile uint8_t* reg, uint8_t bit, int8_t direction);
 
 #endif 

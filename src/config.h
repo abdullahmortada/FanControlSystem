@@ -1,7 +1,7 @@
 #ifndef __config__ 
 #define __config__
 
-#include <stdint.h>
+#include "dio.h"
 
 #define F_CPU 16000000UL
 #define BAUD 9600 
@@ -18,10 +18,5 @@
 
 //main loop delay
 #define DELAY_LOOP 100
-
-#define MOTOR_DIR_PORT DDRD
-#define MOTOR_PORT PORTD
-#define MOTOR_NUM 1
-uint8_t MotorArray[][2] = {{2, 3}};
 
 #endif

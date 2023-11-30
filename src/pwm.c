@@ -1,6 +1,11 @@
 #include "pwm.h"
 
-void pwm_DutyCycle(uint8_t timer, uint8_t channel, uint8_t DutyCycle){
-  timerStart(timer, TIMER_MODE_PWM, channel, PRESCALER_NONE, DutyCycle);
+void pwm_Init(struct PWM_PIN pwmPin){
+  dio_SetDirection(pwmPin.ddr, pwmPin.pin, DIO_OUTPUT);
+  pwm_DutyCycle(pwmPin, 0);
+}
+
+void pwm_DutyCycle(struct PWM_PIN pwmPin, uint8_t dutyCycle){
+  timerStart(pwmPin.timer, TIMER_MODE_PWM, pwmPin.channel, PRESCALER_NONE, dutyCycle);
 }
 
