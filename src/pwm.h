@@ -20,6 +20,6 @@ static struct PWM_PIN PWM_PD3 = {2,2,3,DDRD};
 
 void pwm_Init(struct PWM_PIN pwmPin);
 
-void pwm_DutyCycle(struct PWM_PIN pwmPin, uint8_t dutyCycle);
+void pwm_DutyCycle(struct PWM_PIN pwmPin, size_t dutyCycle);
 
 #endif
