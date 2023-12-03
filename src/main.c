@@ -51,7 +51,7 @@ int main() {
             //cooling mode
             pace=150
             motor_Speed(pin1, DIRECTION_CW , uint8_t Speed);
-            pwm_DutyCycle(PWM_PD6, speed);
+            pwm_DutyCycle(PWM_PD6, pace);
 
         }
 
@@ -63,7 +63,7 @@ int main() {
             //extreme cooling mode
             pace=250
             motor_Speed(pin1, DIRECTION_CW , uint8_t Speed);
-            pwm_DutyCycle(PWM_PD6, speed);
+            pwm_DutyCycle(PWM_PD6, pace);
 
         }
         if (i==3)
@@ -72,7 +72,7 @@ int main() {
             //heating mode
             motor_Speed(pin1, DIRECTION_CCW , uint8_t Speed);
             pace=150
-            pwm_DutyCycle(PWM_PD6, speed);
+            pwm_DutyCycle(PWM_PD6, pace);
 
         }
 
@@ -81,7 +81,7 @@ int main() {
             mode[4];
             pace+=15;
             motor_Speed(pin1, DIRECTION_CW , uint8_t Speed);
-            pwm_DutyCycle(PWM_PD6, speed);
+            pwm_DutyCycle(PWM_PD6, pace);
             
             
             
@@ -91,7 +91,7 @@ int main() {
                 mode[4];
                 pace-=15;
                 motor_Speed(pin1, DIRECTION_CW , uint8_t Speed);
-                pwm_DutyCycle(PWM_PD6, speed);
+                pwm_DutyCycle(PWM_PD6, pace);
             
             
             }
@@ -101,7 +101,7 @@ int main() {
             mode[5];
             pace+=15;
             motor_Speed(pin1, DIRECTION_CCW , uint8_t Speed);
-            pwm_DutyCycle(PWM_PD6, speed);
+            pwm_DutyCycle(PWM_PD6, pace);
             
             
             
@@ -111,7 +111,7 @@ int main() {
                 mode[5];
                 pace-=15;
                 motor_Speed(pin1, DIRECTION_CCW , uint8_t Speed);
-                pwm_DutyCycle(PWM_PD6, speed);
+                pwm_DutyCycle(PWM_PD6, pace);
             
             
             }
