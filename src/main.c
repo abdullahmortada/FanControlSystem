@@ -100,7 +100,7 @@ int main() {
         {
             mode[5];
             pace+=15;
-            motor_Speed(pin1, DIRECTION_CcW , uint8_t Speed);
+            motor_Speed(pin1, DIRECTION_CCW , uint8_t Speed);
             pwm_DutyCycle(PWM_PD6, speed);
             
             
@@ -110,7 +110,7 @@ int main() {
             {
                 mode[5];
                 pace-=15;
-                motor_Speed(pin1, DIRECTION_CcW , uint8_t Speed);
+                motor_Speed(pin1, DIRECTION_CCW , uint8_t Speed);
                 pwm_DutyCycle(PWM_PD6, speed);
             
             
