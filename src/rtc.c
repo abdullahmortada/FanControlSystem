@@ -8,7 +8,7 @@ void rtc_write(char second, char minute,char hour)
     I2C_write(0); //(00)
     I2C_write(_second);//loction gets auto incremented (01)
     I2C_write(_minute);//(02)
-    I2C_stop()
+    I2C_stop();
 
 }
 void RTC_Read_Clock(char read_clock_address)
