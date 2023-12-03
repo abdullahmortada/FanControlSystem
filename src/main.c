@@ -11,6 +11,15 @@
 //eeprom -> update data when button pressed, fetch data on boot and when mode changed 
 //buttons dio -> interrupt to update mode, speed and swing 
 //thermistor -> update before lcd cycle 
+//
+//
+//2 buttons for temp up and down WHEN in custom mode 
+//1 button for mode change 
+//1 button for swing on/off 
+//
+//for mode change: 
+//  i++, if i > size of mode, then u are in custom mode 
+//  in custom mode save temp to eeprom and read from eeprom the temp when u first get into mode 
 
 volatile uint64_t TIME = 0;
 
