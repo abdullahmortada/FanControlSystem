@@ -4,6 +4,7 @@
 #include "dio.h"
 #include "config.h"
 #include "eeprom.h"
+#include "CustomCharacters.h"
 
 
 int main() {
