@@ -57,3 +57,9 @@ int main() {
 ISR(TIMER1_COMPA_vect){
   TIME += 1;
 }
+
+//to init interrupts, set pcicr bit number 0 to 1 
+//then MCMSK0 is like "portb", if u want interrupt on portb5, set bit number 5 in mcmsk0 to 1
+ISR(PCINT0_vect){
+
+}
