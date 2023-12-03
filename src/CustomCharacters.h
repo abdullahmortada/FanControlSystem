@@ -1,23 +1,11 @@
-#ifndef _CUSTOM_CHARACTERS_H_
-#define _CUSTOM_CHARACTERS_H_
+#ifndef CUSTOM_CHARACTERS_H
+#define CUSTOM_CHARACTERS_H
 
-#include <LiquidCrystal.h>
+#include <stdint.h>
+#include <avr/io.h>
 
-class CustomCharacters {
-public:
-    CustomCharacters(); // Constructor
+void customCharacters_Init();
 
-    void setupLCD();
-    void displayCustomCharacters();
-
-private:
-    LiquidCrystal MyLCD;
-
-    // LCD Custom Characters
-    uint8_t CatChar[8];
-    uint8_t SharkChar[8];
-    uint8_t HeartChar[8];
-    uint8_t FunnyManChar[8];
-};
+void customCharacters_Display();
 
 #endif 
