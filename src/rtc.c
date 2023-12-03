@@ -2,7 +2,8 @@
 #include <avr/io.h>
 #include "I2C.h"
 
-void rtc_write(char second, char minute,char hour){
+void rtc_write(char second, char minute,char hour)
+{
     I2C_start(0xD0);//device address in the i2c
     I2C_write(0); //(00)
     I2C_write(_second);//loction gets auto incremented (01)
