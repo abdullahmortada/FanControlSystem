@@ -2,6 +2,7 @@
 #define _dio_ 
 
 #include <stdint.h>
+#include "sfrdef.h"
 
 #define DIO_INPUT 0
 #define DIO_OUTPUT 1
@@ -11,8 +12,6 @@
 #define LOW 0
 
 #define DIO_BITMASK(val, bit) (val<<bit)
-
-#define __SFR_8(mem_addr) (volatile uint8_t *)(mem_addr)
 
 #define PORTB_ADDR (0x25)
 #define PORTC_ADDR (0x28)

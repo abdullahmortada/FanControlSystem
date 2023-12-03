@@ -3,7 +3,6 @@
 
 #include "dio.h"
 #include "pwm.h"
-#include "config.h"
 
 typedef enum {
     DIRECTION_CW = 0,

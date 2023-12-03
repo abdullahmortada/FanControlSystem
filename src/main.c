@@ -1,127 +1,59 @@
-#include <stdio.h>
 #include "adc.h"
-#include "lcd.h"
-#include "dio.h"
 #include "config.h"
-#include "eeprom.h"
-#include "CustomCharacters.h"
+#include "timer.h"
+#include <stdio.h>
+#include <avr/interrupt.h>
 
+//dc motor -> update on mode/speed change 
+//servo motor -> update every 100ms IF swing mode is on
+//lcd -> update temp and time every 300 ms 
+//rtc -> update every 500ms 
+//eeprom -> update data when button pressed, fetch data on boot and when mode changed 
+//buttons dio -> interrupt to update mode, speed and swing 
+//thermistor -> update before lcd cycle 
+
+volatile uint64_t TIME = 0;
+
+volatile uint8_t MODES[] = {100, 175, 255};
+volatile uint8_t current_mode = 0;
+
+volatile uint8_t swing_mode = 0;
 
 int main() {
-    
-    uart_Init(BAUD);
-    Adc_int();
-    lcd_int();
-    motor_Init(pin1);
-    pwm_Init(PWM_PD6);
-    
-    int i=0 ;
-    int pace=0
 
-    int mode[i]={cooling,extreme cooling, heating ,custom1 ,custom2}
+  timerStart(0, TIMER_MODE_COUNT, 0, PRESCALER_1024, (F_CPU)/(1024*1000));
 
-    while(1)
-    {
-
-        int analog=adc_ReadChannel(1);
-        int heat=analog*ADC_VOLT_PER_STEP 
-;
-        //5000 v cause milli volt
-        //n number of bits
-        int temp= heat/10;
-        //make it degree celcius 10 mv per 1 degree
+  //init adc 
+  
+  //init button
+  //init button interrupts
 
 
-
-        if (button1 != 0)
-        {
-            mode[i++];
-            else if (i<6)
-
-            {
-            i=0;
-            }
-            
-         // Print current temperature, mode, and pace
-        printf("Current Temperature: %d degrees Celsius\n", temp);
-        printf("Current Mode: %d\n", mode[i]);
-        printf("Current Pace: %d\n", pace);
-        }
-
-         if (i==1)
-        {
-            mode[1];
-            //cooling mode
-            pace=150
-            motor_Speed(pin1, DIRECTION_CW , (uint8_t)pace);
-            pwm_DutyCycle(PWM_PD6, pace);
-
-        }
-
-
-        
-         if (i==2)
-        {
-            mode[2];
-            //extreme cooling mode
-            pace=250
-            motor_Speed(pin1, DIRECTION_CW , (uint8_t)pace);
-            pwm_DutyCycle(PWM_PD6, pace);
-
-        }
-        if (i==3)
-        {
-            mode[3];
-            //heating mode
-            motor_Speed(pin1, DIRECTION_CCW , (uint8_t)pace);
-            pace=150
-            pwm_DutyCycle(PWM_PD6, pace);
-
-        }
-
-        if (i==4  && button2 !=0)
-        {
-            mode[4];
-            pace+=15;
-            motor_Speed(pin1, DIRECTION_CW , (uint8_t)pace);
-            pwm_DutyCycle(PWM_PD6, pace);
-            
-            
-            
-        
-            else if ( button3 != 0)
-            {
-                mode[4];
-                pace-=15;
-                motor_Speed(pin1, DIRECTION_CW , (uint8_t)pace);
-                pwm_DutyCycle(PWM_PD6, pace);
-            
-            
-            }
-        }
-        if (i==5  && button2 !=0)
-        {
-            mode[5];
-            pace+=15;
-            motor_Speed(pin1, DIRECTION_CCW , (uint8_t)pace);
-            pwm_DutyCycle(PWM_PD6, pace);
-            
-            
-            
-        
-            else if ( button3 != 0)
-            {
-                mode[5];
-                pace-=15;
-                motor_Speed(pin1, DIRECTION_CCW , (uint8_t)pace);
-                pwm_DutyCycle(PWM_PD6, pace);
-            
-            
-            }
-        }
+  while(1)
+  {
+    if(TIME % 100 == 0 && swing_mode == 1){
+      //update servo position
     }
-   
+
+    if(TIME % 300 == 0){
+      double vOut= adc_ReadChannel(1) * ADC_VOLT_PER_STEP;
+      //5000 v cause milli volt
+      uint8_t heat = vOut / 10;
+      
+
+      //update lcd string 
+      //output string on lcd
+    }
+
+    if(TIME % 500 == 0){
+      //update time using rtc
+
+      //update lcd string 
+    }
+  }
 
 }
 
-
+ISR(TIMER1_COMPA_vect){
+  TIME += 1;
+}

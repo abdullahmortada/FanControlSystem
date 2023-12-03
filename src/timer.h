@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include "sfrdef.h"
 
 #define TIMER_MODE_PWM 0 
 #define TIMER_MODE_COUNT 1
@@ -13,9 +14,6 @@
 #define TIMER_INTMASK 3
 
 #define COMX 6
-
-#define __SFR_8(mem_addr) (volatile uint8_t *)(mem_addr)
-#define __SFR_16(mem_addr) (volatile uint16_t *)(mem_addr)
 
 #define TIMER0_CMPA __SFR_8(0x47)
 #define TIMER0_CMPB __SFR_8(0x48)
@@ -45,7 +43,7 @@ void timerStart(uint8_t timer,
     uint8_t mode, 
     uint8_t channel, 
     timer_prescaler prescaler, 
-    size_t compare);
+    uint16_t compare);
 
 void timerPWM(uint8_t timer, uint8_t channel);
 

@@ -31,3 +31,10 @@ testTimer:
 	$(copier) -O ihex -R .eeprom main.bin main.hex 
 	sudo $(flash) $(flashOptions)
 	rm main.bin main.hex main.o
+
+testEeprom:
+	$(cc) $(options) uart.c eeprom.c eepromTest.c -o main.o
+	$(cc) -o main.bin main.o 
+	$(copier) -O ihex -R .eeprom main.bin main.hex 
+	sudo $(flash) $(flashOptions)
+	rm main.bin main.hex main.o

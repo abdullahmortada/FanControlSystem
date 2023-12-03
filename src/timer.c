@@ -1,6 +1,6 @@
 #include "timer.h"
 
-void timerStart(uint8_t timer, uint8_t mode, uint8_t channel, timer_prescaler prescaler, size_t compare){
+void timerStart(uint8_t timer, uint8_t mode, uint8_t channel, timer_prescaler prescaler, uint16_t compare){
 
   //controlB register
   *(TIMER_ARRAY[timer][TIMER_CTRlA] + 1) &= 0xF8;
