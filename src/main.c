@@ -12,7 +12,6 @@ int main() {
     Adc_int();
     lcd_int();
     motor_Init(pin1);
-
     pwm_Init(PWM_PD6);
     
     int i=0 ;
