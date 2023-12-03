@@ -11,13 +11,14 @@ int main() {
     uart_Init(BAUD);
     Adc_int();
     lcd_int();
+    motor_Init(pin1);
 
     pwm_Init(PWM_PD6);
     
     int i=0 ;
-    int speed=0
+    int pace=0
 
-    mode[i]={cooling,extreme cooling, heating ,custom}
+    mode[i]={cooling,extreme cooling, heating ,custom1 ,custom2}
 
     while(1)
     {
@@ -35,7 +36,7 @@ int main() {
         if (button1 != 0)
         {
             mode[i++];
-            else if (i<5)
+            else if (i<6)
 
             {
             i=0;
@@ -43,22 +44,77 @@ int main() {
             
 
         }
+
+         if (i==1)
+        {
+            mode[1];
+            //cooling mode
+            pace=150
+            motor_Speed(pin1, DIRECTION_CW , uint8_t Speed);
+            pwm_DutyCycle(PWM_PD6, speed);
+
+        }
+
+
+        
+         if (i==2)
+        {
+            mode[2];
+            //extreme cooling mode
+            pace=250
+            motor_Speed(pin1, DIRECTION_CW , uint8_t Speed);
+            pwm_DutyCycle(PWM_PD6, speed);
+
+        }
+        if (i==3)
+        {
+            mode[3];
+            //heating mode
+            motor_Speed(pin1, DIRECTION_CCW , uint8_t Speed);
+            pace=150
+            pwm_DutyCycle(PWM_PD6, speed);
+
+        }
+
         if (i==4  && button2 !=0)
         {
-            //custom mode 
-            speed+=15;
+            mode[4];
+            pace+=15;
+            motor_Speed(pin1, DIRECTION_CW , uint8_t Speed);
             pwm_DutyCycle(PWM_PD6, speed);
             
             
             
+        
+            else if ( button3 != 0)
+            {
+                mode[4];
+                pace-=15;
+                motor_Speed(pin1, DIRECTION_CW , uint8_t Speed);
+                pwm_DutyCycle(PWM_PD6, speed);
+            
+            
+            }
         }
-         if (i==4  && button3 != 0)
+        if (i==5  && button2 !=0)
         {
-            //custom mode 
-            speed-=15;
+            mode[5];
+            pace+=15;
+            motor_Speed(pin1, DIRECTION_CcW , uint8_t Speed);
             pwm_DutyCycle(PWM_PD6, speed);
             
             
+            
+        
+            else if ( button3 != 0)
+            {
+                mode[5];
+                pace-=15;
+                motor_Speed(pin1, DIRECTION_CcW , uint8_t Speed);
+                pwm_DutyCycle(PWM_PD6, speed);
+            
+            
+            }
         }
     }
    
