@@ -18,7 +18,7 @@ int main() {
     int i=0 ;
     int pace=0
 
-    mode[i]={cooling,extreme cooling, heating ,custom1 ,custom2}
+    int mode[i]={cooling,extreme cooling, heating ,custom1 ,custom2}
 
     while(1)
     {
@@ -42,7 +42,10 @@ int main() {
             i=0;
             }
             
-
+         // Print current temperature, mode, and pace
+        printf("Current Temperature: %d degrees Celsius\n", temp);
+        printf("Current Mode: %d\n", mode[i]);
+        printf("Current Pace: %d\n", pace);
         }
 
          if (i==1)
@@ -50,7 +53,7 @@ int main() {
             mode[1];
             //cooling mode
             pace=150
-            motor_Speed(pin1, DIRECTION_CW , uint8_t Speed);
+            motor_Speed(pin1, DIRECTION_CW , (uint8_t)pace);
             pwm_DutyCycle(PWM_PD6, pace);
 
         }
@@ -62,7 +65,7 @@ int main() {
             mode[2];
             //extreme cooling mode
             pace=250
-            motor_Speed(pin1, DIRECTION_CW , uint8_t Speed);
+            motor_Speed(pin1, DIRECTION_CW , (uint8_t)pace);
             pwm_DutyCycle(PWM_PD6, pace);
 
         }
@@ -70,7 +73,7 @@ int main() {
         {
             mode[3];
             //heating mode
-            motor_Speed(pin1, DIRECTION_CCW , uint8_t Speed);
+            motor_Speed(pin1, DIRECTION_CCW , (uint8_t)pace);
             pace=150
             pwm_DutyCycle(PWM_PD6, pace);
 
@@ -80,7 +83,7 @@ int main() {
         {
             mode[4];
             pace+=15;
-            motor_Speed(pin1, DIRECTION_CW , uint8_t Speed);
+            motor_Speed(pin1, DIRECTION_CW , (uint8_t)pace);
             pwm_DutyCycle(PWM_PD6, pace);
             
             
@@ -90,7 +93,7 @@ int main() {
             {
                 mode[4];
                 pace-=15;
-                motor_Speed(pin1, DIRECTION_CW , uint8_t Speed);
+                motor_Speed(pin1, DIRECTION_CW , (uint8_t)pace);
                 pwm_DutyCycle(PWM_PD6, pace);
             
             
@@ -100,7 +103,7 @@ int main() {
         {
             mode[5];
             pace+=15;
-            motor_Speed(pin1, DIRECTION_CCW , uint8_t Speed);
+            motor_Speed(pin1, DIRECTION_CCW , (uint8_t)pace);
             pwm_DutyCycle(PWM_PD6, pace);
             
             
@@ -110,7 +113,7 @@ int main() {
             {
                 mode[5];
                 pace-=15;
-                motor_Speed(pin1, DIRECTION_CCW , uint8_t Speed);
+                motor_Speed(pin1, DIRECTION_CCW , (uint8_t)pace);
                 pwm_DutyCycle(PWM_PD6, pace);
             
             
