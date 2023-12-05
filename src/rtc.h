@@ -2,9 +2,10 @@
 #define __rtc__
 
 #include <stdint.h>
+#include "i2c.h"
 
-void rtc_write(char second, char minute,char hour);
+void rtc_Write(uint8_t second, uint8_t minute, uint8_t hour);
 
-void RTC_Read_Clock(char read_clock_address);
+void rtc_Read( uint8_t read_clock_address);
 
 #endif

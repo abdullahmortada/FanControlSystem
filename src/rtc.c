@@ -1,26 +1,20 @@
-#include"rtc.h"
-#include <avr/io.h>
-#include "I2C.h"
+#include "rtc.h"
 
-void rtc_write(char second, char minute,char hour)
+void rtc_write(uint8_t* data)
 {
-    I2C_start(0xD0);//device address in the i2c
-    I2C_write(0); //(00)
-    I2C_write(_second);//loction gets auto incremented (01)
-    I2C_write(_minute);//(02)
-    I2C_write(_hour);
-    I2C_stop();
-
+  i2c_MasterTransmit(RTC_DEV_ADDR, data, 4, 0);
 }
-void RTC_Read_Clock(char read_clock_address)
-{
-	I2C_Start(0xD0);/* Start I2C communication with RTC */
-	I2C_Write(read_clock_address);	/* Write address to read */
-	I2C_Repeated_Start(Device_Read_address);/* Repeated start with device read address */
 
-	second = I2C_Read_Ack();	
-	minute = I2C_Read_Ack();	
-	hour = I2C_Read_Nack();		
-	I2C_Stop();			
+void RTC_Read_Clock(uint8_t read_addr, uint8_t* second, uint8_t* minute, uint8_t* hour)
+{
+	i2c_Start();/* Start I2C communication with RTC */
+	i2c_WriteSla(0xD0);	/* Write address to read */
+	i2c_Write(read_addr);	/* Write address to read */
+	i2c_RepStart(Device_Read_address);/* Repeated start with device read address */
+
+	*second = i2c_Read(1);	
+	*minute = i2c_Read(1);	
+  *hour = i2c_Read(1);	
+  i2c_Stop();			
 }
 
