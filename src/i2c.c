@@ -1,6 +1,6 @@
 #include "i2c.h"
 
-static ret_code_t i2c_Start(void)
+ret_code_t i2c_Start(void)
 {
 	TWCR =  (1 << TWINT) | (1 << TWEN) | (1 << TWSTA);
 	
@@ -17,14 +17,14 @@ static ret_code_t i2c_Start(void)
 }
 
 
-static void i2c_Stop(void)
+void i2c_Stop(void)
 {
 	/* Send STOP condition */
 	TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
 }
 
 
-static ret_code_t i2c_WriteSla(uint8_t sla)
+ret_code_t i2c_WriteSla(uint8_t sla)
 {
 	/* Transmit slave address with read/write flag */
 	TWDR = sla;
@@ -41,7 +41,7 @@ static ret_code_t i2c_WriteSla(uint8_t sla)
 }
 
 
-static ret_code_t i2c_Write(uint8_t data)
+ret_code_t i2c_Write(uint8_t data)
 {
 	/* Transmit 1 byte*/
 	TWDR = data;
@@ -58,7 +58,7 @@ static ret_code_t i2c_Write(uint8_t data)
 }
 
 
-static uint8_t i2c_Read(bool read_ack)
+uint8_t i2c_Read(bool read_ack)
 {
 	if (read_ack)
 	{
@@ -156,6 +156,10 @@ ret_code_t i2c_MasterTransmit(uint8_t slave_addr, uint8_t* p_data, uint8_t len, 
 	}
 	
 	return SUCCESS;
+}
+
+ret_code_t i2c_MasterTransmitByte(uint8_t slave_addr, uint8_t data){
+  return i2c_MasterTransmit(slave_addr, &data, 1, false);
 }
 
 

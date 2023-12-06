@@ -1,45 +1,38 @@
-#include <avr/io.h>
-#include <util/delay.h>	  
 #include "lcd.h"
-
-void lcd_Send(uint8_t data, uint8_t toggleData)
-{
-  // send upper nibble of data
-	LCD_Port = (LCD_Port & 0x0F) | (data & 0xF0); 
-	RS_EN_Port = (RS_EN_Port & ~(1<<RS)) | (toggleData << RS);		
-
-  // send pulse
-	RS_EN_Port |= (1<<EN);
-	_delay_us(1);
-	RS_EN_Port &= ~ (1<<EN);
-
-	_delay_us(200);
-
-  // send lower nibble of data
-	LCD_Port = (LCD_Port & 0x0F) | (data << 4); 
-
-	RS_EN_Port |= (1<<EN);
-	_delay_us(1);
-	RS_EN_Port &= ~ (1<<EN);
-
-  _delay_ms(2);
-
-}
-
 
 void lcd_Init ()	
 {
-	LCD_Dir |= 0xFF; 
-  RS_EN_Dir |= (1 << EN) | (1 << RS);
+  i2c_Init(I2C_FREQ_250K, false);
 
-	_delay_ms(20);	
+	_delay_ms(40);	
 	
 	lcd_Send(0x02, 0);		  /* send for 4 bit initialization of LCD  */
-	lcd_Send(0x28, 0);      /* 2 line, 5*7 matrix in 4-bit mode */
-	lcd_Send(0x0c, 0);      /* Display on cursor off*/
-	lcd_Send(0x06, 0);      /* Increment cursor (shift cursor to right)*/
-	lcd_Send(0x01, 0);      /* Clear display screen*/
+	lcd_Send(LCD_SETUP | LCD_4BIT | LCD_2LINE, 0);      /* 2 line, 5*7 matrix in 4-bit mode */
+	lcd_Send(LCD_BACKLIGHT | LCD_NOCURSOR, 0);      /* Display on cursor off*/
+	// lcd_Send(0x06, 0);      /* Increment cursor (shift cursor to right)*/
+	// lcd_Send(0x01, 0);      /* Clear display screen*/
 }
+
+
+static void sendBits(uint8_t data){
+  i2c_MasterTransmitByte(LCD_DEV_ADDR, data | LCD_EN);
+  _delay_us(1);
+  i2c_MasterTransmitByte(LCD_DEV_ADDR, data & ~LCD_EN);
+  _delay_us(50);
+}
+
+
+void lcd_Send(uint8_t data, uint8_t mode)
+{
+
+  // i2c_MasterTransmitByte(LCD_DEV_ADDR, data & 0xF0 | mode);
+
+  sendBits(data & 0xF0 | mode);
+
+  // i2c_MasterTransmitByte(LCD_DEV_ADDR, (data << 4) | mode);
+  sendBits((data << 4) | mode);
+}
+
 
 void lcd_String (char* str)		
 {
@@ -60,6 +53,6 @@ void lcd_StringXY (char* str, uint8_t row, uint8_t pos)	/* Send string to LCD wi
 
 void lcd_Clear()
 {
-	lcd_Send (0x01, 0);		/* Clear display */
+	lcd_Send (LCD_CLEAR, 0);		/* Clear display */
 	lcd_Send (0x80, 0);		/* Cursor at home position */
 }

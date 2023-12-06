@@ -2,10 +2,23 @@
 #define __rtc__
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "i2c.h"
 
-void rtc_Write(uint8_t second, uint8_t minute, uint8_t hour);
+#define RTC_DEV_ADDR 0x68
+#define RTC_CTRL 0x07
+#define RTC_RAM 0x08
 
-void rtc_Read( uint8_t read_clock_address);
+struct DateTime {
+  uint16_t Year;
+  uint8_t Month;
+  uint8_t Day;
+  uint8_t Hour;
+  uint8_t Minute;
+};
+
+void rtc_Write(struct DateTime *dt);
+
+void rtc_Now(struct DateTime *dh);
 
 #endif

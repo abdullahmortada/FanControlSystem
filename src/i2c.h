@@ -50,17 +50,18 @@ typedef enum {
 
 void i2c_Init(i2c_freq_mode_t twi_freq, bool pullup_en);
 
-static ret_code_t i2c_Start(void);
+ret_code_t i2c_Start(void);
 
-static void i2c_Stop(void);
+void i2c_Stop(void);
 
-static ret_code_t i2c_WriteSla(uint8_t sla);
+ret_code_t i2c_WriteSla(uint8_t sla);
 
-static ret_code_t i2c_Write(uint8_t data);
+ret_code_t i2c_Write(uint8_t data);
 
-static uint8_t i2c_Read(bool read_ack);
+uint8_t i2c_Read(bool read_ack);
 
 ret_code_t i2c_MasterTransmit(uint8_t slave_addr, uint8_t* p_data, uint8_t len, bool repeat_start);
+ret_code_t i2c_MasterTransmitByte(uint8_t slave_addr, uint8_t p_data);
 
 ret_code_t i2c_MasterReceive(uint8_t slave_addr, uint8_t* p_data, uint8_t len);
 
