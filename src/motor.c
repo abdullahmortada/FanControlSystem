@@ -11,6 +11,6 @@ void motor_Speed(struct MOTOR_STRUCT* motor, tenuDirection direction, uint8_t sp
 }
 
 void motor_Stop(struct MOTOR_STRUCT* motor){
-  dio_SetBit(motor->pin1.ddr + 1, motor->pin1.pin, 0);
-  dio_SetBit(motor->pin2.ddr + 1, motor->pin2.pin, 0);
+  pwm_DutyCycle(motor->pin1, 0);
+  pwm_DutyCycle(motor->pin2, 0);
 }
