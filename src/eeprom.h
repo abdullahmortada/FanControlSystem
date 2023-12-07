@@ -1,17 +1,18 @@
 #ifndef __eeprom__
 #define __eeprom__
 
+#include <avr/io.h>
 #include <stddef.h>
 #include <stdint.h>
 #include "sfrdef.h"
 
 
-#define EEAR __SFR_16(0x41)
-#define EEARL __SFR_8(0x41)
-#define EEARH __SFR_8(0x42)
-
-#define EEDR __SFR_8(0x40)
-#define EECR __SFR_8(0x3F)
+// #define EEAR __SFR_16(0x41)
+// #define EEARL __SFR_8(0x41)
+// #define EEARH __SFR_8(0x42)
+//
+// #define EEDR __SFR_8(0x40)
+// #define EECR __SFR_8(0x3F)
 
 #define EERE 0
 #define EEPE 1 

@@ -44,8 +44,8 @@
 #include "util/delay.h"
 
 int main(){
-  *DDRD |= 1 << 6 | 1<<7 | 1<<5;
-    dio_SetBit(PORTD, 5, 1);
+  DDRD |= 1 << 6 | 1<<7 | 1<<5;
+    dio_SetBit(&PORTD, 7, 1);
   while(1){
     for (int i = 100; i < 255; i = i + 20){
     pwm_DutyCycle(PWM_PD6, i);

@@ -4,24 +4,24 @@
 
 void eeprom_write(uint16_t address_u16, uint8_t data)
 { 
-    while (*EECR & (1<<EEPE));
+    while (EECR & (1<<EEPE));
 
-    *EEAR = address_u16;
+    EEAR = address_u16;
     
-    *EECR |= (1<<EEMPE);//enable writing
+    EECR |= (1<<EEMPE);//enable writing
     
-    *EEDR = data;
-    *EECR |= (1<<EEPE);//start writing 
+    EEDR = data;
+    EECR |= (1<<EEPE);//start writing 
 
 }
 
 uint8_t eeprom_read(uint16_t address_u16)
 {
   
-    while (*EECR & (1<<EEPE));
-    *EEAR = address_u16;
-    *EECR |= (1<<EERE);//start reading
-    return *EEDR;
+    while (EECR & (1<<EEPE));
+    EEAR = address_u16;
+    EECR |= (1<<EERE);//start reading
+    return EEDR;
  
 }
 

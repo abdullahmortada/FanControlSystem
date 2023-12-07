@@ -54,7 +54,7 @@ void initButtons() {
   dio_SetBit(BUTTON_DDR + 1, DOWN_BUTTON, HIGH);
 
   // enable pin change interrupts for button port
-  dio_SetBit(PCICR, BUTTON_PCIE, HIGH);
+  dio_SetBit(&PCICR, BUTTON_PCIE, HIGH);
 
   // enable pin change interrupts for each pin
   dio_SetBit(BUTTON_PCMSK, SWING_BUTTON, HIGH);
@@ -73,30 +73,21 @@ void updateLCD(struct DateTime* time, uint8_t heat) {
   lcd_StringXY(tmp, 5, 0, 1);
 
   intToString(heat, tmp, 10);
-  lcd_StringXY("°C: ", 4, 0, 8);
+  lcd_StringXY("C: ", 4, 0, 8);
   lcd_String(tmp, 2);
-  uart_SendString("°C: ");
-  uart_SendString(tmp);
-  uart_Transmit('\n');
 
   intToString(current_mode, tmp, 10);
-  lcd_StringXY("Mode: ", 6, 1, 1);
+  lcd_StringXY("Mode:", 5, 1, 0);
   lcd_String(tmp, 1);
-  uart_SendString("Mode: ");
-  uart_SendString(tmp);
-  uart_Transmit('\n');
 
   intToString(motor.speed, tmp, 10);
-  lcd_StringXY("Speed: ", 7, 1, 10);
+  lcd_StringXY("Speed:", 7, 1, 7);
   lcd_String(tmp, 3);
-  uart_SendString("Speed: ");
-  uart_SendString(tmp);
-  uart_Transmit('\n');
 }
 
 int main() {
 
-  timerStart(0, TIMER_MODE_COUNT, 0, PRESCALER_1024, ((uint64_t)F_CPU)/((uint64_t)1024*1000));
+  // timerStart(0, TIMER_MODE_COUNT, 0, PRESCALER_1024, ((uint64_t)F_CPU)/((uint64_t)1024*1000));
 
   uart_Init(9600);
   adc_Init();
@@ -109,15 +100,21 @@ int main() {
   motor.pin1 = MOTOR_P1;
   motor.pin2 = MOTOR_P2;
   motor.ddr = MOTOR_DDR;
+  motor.speed = MODES[current_mode];
+
+  pwm_Setup();
+  motor_Init(&motor);
+
+  motor_Go(&motor, DIRECTION_CCW);
 
   while(1)
   {
-    if(TIME % 100 == 0 && swing_mode){
-      //update servo position
-      updateServoPosition();
-      // use updated to control servo
-    }
-
+    // if(TIME % 100 == 0 && swing_mode){
+    //   //update servo position
+    //   updateServoPosition();
+    //   // use updated to control servo
+    // }
+    //
     // if(TIME % 300 == 0){
     //     // double thermistorVoltage = adc_ReadChannel(THMISTOR_ADC_CHANNEL) * ADC_VOLT_PER_STEP;
     //     // double thermistorResistance = (ADC_REF_VOLTAGE / thermistorVoltage - 1) * THERMISTOR_RESISTOR;
@@ -133,24 +130,22 @@ int main() {
     //   _delay_ms(1);
     // }
 
-    lcd_String("hello", 5);
     double vOut = adc_ReadChannel(ADC_CHANNEL) * ADC_VOLT_PER_STEP;
     uint8_t heat = vOut / 10;
-    
+
     rtc_Now(&dateTime);
-    // updateLCD(&dateTime, heat);
+    updateLCD(&dateTime, heat);
 
     _delay_ms(10);
   }
 
 }
 
-ISR(TIMER1_COMPA_vect){
-  //increment time elapsed every ms
-  TIME += 1;
-  uart_Transmit('a');
-  uart_Transmit('\n');
-}
+// ISR(TIMER1_COMPA_vect){
+//   //increment time elapsed every ms
+//   TIME += 1;
+//   uart_Transmit('a');
+// }
 
 ISR(PCINT0_vect){
     check_button(MODE_BUTTON){
@@ -163,11 +158,14 @@ ISR(PCINT0_vect){
       }
       motor_Go(&motor, (current_mode > 3));
 
+      uart_Transmit('a');
+
       wait_button(MODE_BUTTON);
     }
 
     check_button(SWING_BUTTON){
       swing_mode = !swing_mode;
+      uart_Transmit('b');
       wait_button(SWING_BUTTON);
     }
 
@@ -179,6 +177,7 @@ ISR(PCINT0_vect){
       if((current_mode + 1) % 4 == 0){
         eeprom_write(current_mode, motor.speed);
       }
+      uart_Transmit('c');
     }
 
     check_button(DOWN_BUTTON){
@@ -190,5 +189,6 @@ ISR(PCINT0_vect){
       if((current_mode + 1) % 4 == 0){
         eeprom_write(current_mode, motor.speed);
       }
+      uart_Transmit('d');
     }
 }

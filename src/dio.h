@@ -25,22 +25,22 @@
 #define PINC_ADDR (0x26)
 #define PIND_ADDR (0x29)
 
-#define PORTB __SFR_8(0x25)
-#define PORTC __SFR_8(0x28)
-#define PORTD __SFR_8(0x2B)
-
-#define DDRB __SFR_8(0x24)
-#define DDRC __SFR_8(0x27)
-#define DDRD __SFR_8(0x2A)
-
-#define PINB __SFR_8(0x23)
-#define PINC __SFR_8(0x26)
-#define PIND __SFR_8(0x29)
-
-#define PCICR __SFR_8(0x68)
-#define PCMSK0 __SFR_8(0x6B)
-#define PCMSK1 __SFR_8(0x6C)
-#define PCMSK2 __SFR_8(0x6D)
+// #define PORTB __SFR_8(0x25)
+// #define PORTC __SFR_8(0x28)
+// #define PORTD __SFR_8(0x2B)
+//
+// #define DDRB __SFR_8(0x24)
+// #define DDRC __SFR_8(0x27)
+// #define DDRD __SFR_8(0x2A)
+//
+// #define PINB __SFR_8(0x23)
+// #define PINC __SFR_8(0x26)
+// #define PIND __SFR_8(0x29)
+//
+// #define PCICR __SFR_8(0x68)
+// #define PCMSK0 __SFR_8(0x6B)
+// #define PCMSK1 __SFR_8(0x6C)
+// #define PCMSK2 __SFR_8(0x6D)
 
 
 inline void dio_SetBit(volatile uint8_t* reg, uint8_t bit, uint8_t val){
