@@ -16,12 +16,12 @@ int main() {
     while (1) {
       char testString[] = "LCD Test";
       lcd_Clear();
-      lcd_String(testString);
+      lcd_String(testString, 8);
       _delay_ms(2000);
 
       lcd_Clear();
       char testString2[] = "Position Test";
-      lcd_StringXY(testString2, 1, 5);
+      lcd_StringXY(testString2, 13, 1, 5);
       _delay_ms(2000);
     }
 

@@ -1,21 +1,4 @@
-#include <avr/interrupt.h>
-#include <stdio.h>
-#include "adc.h"
-#include "config.h"
-#include "dio.h"
-#include "timer.h"
-#include "eeprom.h"
-#include "pwm.h"
-#include "rtc.h"
-#include "lcd.h"
-
-#define BUTTON1_PIN 5
-#define BUTTON2_PIN 6
-#define LCD_ADDR 0x27  
-//i2c address of lcd (check this)
-#define EEPROM_MODE_ADDR 0
-#define RTC_UPDATE_INTERVAL 500
-#define THMISTOR_ADC_CHANNEL 1
+#include "config.h" 
 
 //dc motor -> update on mode/speed change 
 //servo motor -> update every 100ms IF swing mode is on
@@ -34,6 +17,8 @@
 //  i++, if i > size of mode, then u are in custom mode 
 //  in custom mode save temp to eeprom and read from eeprom the temp when u first get into mode 
 
+#define check_button(button) if(!dio_GetBit(__SFR_8(BUTTON_DDR - 1), button))
+#define wait_button(button) while(!dio_GetBit(__SFR_8(BUTTON_DDR - 1), button))
 
 volatile uint64_t TIME = 0;
 
@@ -44,7 +29,9 @@ volatile uint8_t swing_mode = 0;
 
 uint16_t servo_position = 0;
 
-//*ill fix the order put initwtv first then the updated after dw and please dont kill me
+struct MOTOR_STRUCT motor;
+struct DateTime dateTime;
+
 void updateServoPosition() {
   servo_position = (servo_position < 510) ? (servo_position + 1) : 0;
   if (servo_position > 255){
@@ -54,104 +41,154 @@ void updateServoPosition() {
   }
 }
 
-// note from fatima: button1 and button2 pins please chang them to the actual pin numbers ty :3
 void initButtons() {
-  // i used PORTB
-      // pull-up resistors
-    PORTB |= (1 << BUTTON1_PIN) | (1 << BUTTON2_PIN);
+  //set as input with pullup resistor
+  dio_SetDirection(BUTTON_DDR, SWING_BUTTON, DIO_INPUT);
+  dio_SetDirection(BUTTON_DDR, MODE_BUTTON, DIO_INPUT);
+  dio_SetDirection(BUTTON_DDR, UP_BUTTON, DIO_INPUT);
+  dio_SetDirection(BUTTON_DDR, DOWN_BUTTON, DIO_INPUT);
+
+  dio_SetBit(BUTTON_DDR + 1, SWING_BUTTON, HIGH);
+  dio_SetBit(BUTTON_DDR + 1, MODE_BUTTON, HIGH);
+  dio_SetBit(BUTTON_DDR + 1, UP_BUTTON, HIGH);
+  dio_SetBit(BUTTON_DDR + 1, DOWN_BUTTON, HIGH);
+
+  // enable pin change interrupts for button port
+  dio_SetBit(PCICR, BUTTON_PCIE, HIGH);
+
+  // enable pin change interrupts for each pin
+  dio_SetBit(BUTTON_PCMSK, SWING_BUTTON, HIGH);
+  dio_SetBit(BUTTON_PCMSK, MODE_BUTTON, HIGH);
+  dio_SetBit(BUTTON_PCMSK, UP_BUTTON, HIGH);
+  dio_SetBit(BUTTON_PCMSK, DOWN_BUTTON, HIGH);
 }
 
-void initButtonInterrupts() {
- // enable pin change interrupts for PORTB
-    PCICR |= (1 << PCIE0);
 
-    //set specific pins for pin change interrupts (BUTTON1_PIN and BUTTON2_PIN)
-    PCMSK0 |= (1 << BUTTON1_PIN) | (1 << BUTTON2_PIN);
-}
+void updateLCD(struct DateTime* time, uint8_t heat) {
+  lcd_Clear();
 
+  char tmp[6];
 
-void updateLCD(uint8_t heat, time) {
-    lcd.clear();                // Clear the LCD screen
-    lcd.setCursor(0, 0);        // Set the cursor to the top-left corner
-    lcd.print("Temperature: "); 
-    lcd.print(heat);  
-    lcd.setCursor(0, 1);
-    lcd.print("Time: ");
-    lcd.print(now.hour());
-    lcd.print(":");
-    lcd.print(now.minute());
-    // do we need more?
-}
+  rtc_dt2timestr(time, tmp);
+  lcd_StringXY(tmp, 5, 0, 1);
 
-void handleButtonPress() {
+  intToString(heat, tmp, 10);
+  lcd_StringXY("°C: ", 4, 0, 8);
+  lcd_String(tmp, 2);
+  uart_SendString("°C: ");
+  uart_SendString(tmp);
+  uart_Transmit('\n');
+
+  intToString(current_mode, tmp, 10);
+  lcd_StringXY("Mode: ", 6, 1, 1);
+  lcd_String(tmp, 1);
+  uart_SendString("Mode: ");
+  uart_SendString(tmp);
+  uart_Transmit('\n');
+
+  intToString(motor.speed, tmp, 10);
+  lcd_StringXY("Speed: ", 7, 1, 10);
+  lcd_String(tmp, 3);
+  uart_SendString("Speed: ");
+  uart_SendString(tmp);
+  uart_Transmit('\n');
 }
 
 int main() {
 
-  timerStart(0, TIMER_MODE_COUNT, 0, PRESCALER_1024, (F_CPU)/(1024*1000));
+  timerStart(0, TIMER_MODE_COUNT, 0, PRESCALER_1024, ((uint64_t)F_CPU)/((uint64_t)1024*1000));
 
-    adc_Init();
-    initButtons();
-    initButtonInterrupts();
-    lcd_Init();
-    
-    sei(); // global inturrupts enabled
+  uart_Init(9600);
+  adc_Init();
+  initButtons();
+  lcd_Init();
+  
+  sei(); // global inturrupts enabled
+
+  motor.en = MOTOR_EN;
+  motor.pin1 = MOTOR_P1;
+  motor.pin2 = MOTOR_P2;
+  motor.ddr = MOTOR_DDR;
 
   while(1)
   {
-    if(TIME % 100 == 0 && swing_mode == 1){
+    if(TIME % 100 == 0 && swing_mode){
       //update servo position
       updateServoPosition();
       // use updated to control servo
     }
 
-    if(TIME % 300 == 0){
-        // double thermistorVoltage = adc_ReadChannel(THMISTOR_ADC_CHANNEL) * ADC_VOLT_PER_STEP;
-        // double thermistorResistance = (ADC_REF_VOLTAGE / thermistorVoltage - 1) * THERMISTOR_RESISTOR;
-        // double temperature = THERMISTOR_BETA / log(thermistorResistance / THERMISTOR_RESISTANCE_ROOM_TEMP);
-        // temperature = temperature - KELVIN_OFFSET;  //to Cels\
+    // if(TIME % 300 == 0){
+    //     // double thermistorVoltage = adc_ReadChannel(THMISTOR_ADC_CHANNEL) * ADC_VOLT_PER_STEP;
+    //     // double thermistorResistance = (ADC_REF_VOLTAGE / thermistorVoltage - 1) * THERMISTOR_RESISTOR;
+    //     // double temperature = THERMISTOR_BETA / log(thermistorResistance / THERMISTOR_RESISTANCE_ROOM_TEMP);
+    //     // temperature = temperature - KELVIN_OFFSET;  //to Cels\
+    //
+    //   double vOut = adc_ReadChannel(ADC_CHANNEL) * ADC_VOLT_PER_STEP;
+    //   uint8_t heat = vOut / 10;
+    //   
+    //   rtc_Now(&dateTime);
+    //   updateLCD(&dateTime, heat);
+    //
+    //   _delay_ms(1);
+    // }
 
-      double vOut = adc_ReadChannel(1) * ADC_VOLT_PER_STEP;
-      uint8_t heat = vOut / 10;
-      
-      updateRTC();
-      updateLCD(heat);
+    lcd_String("hello", 5);
+    double vOut = adc_ReadChannel(ADC_CHANNEL) * ADC_VOLT_PER_STEP;
+    uint8_t heat = vOut / 10;
+    
+    rtc_Now(&dateTime);
+    // updateLCD(&dateTime, heat);
 
-      char lcdString[17]; 
-      snprintf(lcdString, sizeof(lcdString), "Temp:%d Mode:%d %02d:%02d",
-                 heat, current_mode, , );
-      
-      lcd.setCursor(0, 1); 
-      lcd.print(lcdString);
-
-      //update lcd string 
-      //output string on lcd
-    }
-
+    _delay_ms(10);
   }
 
 }
 
 ISR(TIMER1_COMPA_vect){
+  //increment time elapsed every ms
   TIME += 1;
+  uart_Transmit('a');
+  uart_Transmit('\n');
 }
 
-//to init interrupts, set pcicr bit number 0 to 1 
-//then MCMSK0 is like "portb", if u want interrupt on portb5, set bit number 5 in mcmsk0 to 1
 ISR(PCINT0_vect){
-    // Button press handling code
-    if (dio_GetBit(PINB, BUTTON1_PIN)) {
-        // Button 1 is pressed, handle accordingly
-        if (current_mode == sizeof(MODES) / sizeof(MODES[0])) {
-            // In custom mode
-            // Save temperature to EEPROM
-            eeprom_write_byte((uint8_t *)EEPROM_TEMP_ADDR, temperature);
-        }
-        // Increase temperature or perform other actions
+    check_button(MODE_BUTTON){
+      current_mode += 1;
+      if(current_mode > 7) current_mode = 0;
+      if((current_mode + 1) % 8 == 0) {
+        motor.speed = eeprom_read(current_mode);
+      } else {
+        motor.speed = MODES[current_mode % 4];
+      }
+      motor_Go(&motor, (current_mode > 3));
+
+      wait_button(MODE_BUTTON);
     }
-    if (dio_GetBit(PINB, BUTTON2_PIN)) {
-        // Button 2 is pressed, handle accordingly
-        // Toggle swing mode or perform other actions
-        swing_mode = !swing_mode;
+
+    check_button(SWING_BUTTON){
+      swing_mode = !swing_mode;
+      wait_button(SWING_BUTTON);
+    }
+
+    check_button(UP_BUTTON){
+      motor.speed += 10;
+      motor.speed = clamp(motor.speed, MOTOR_MIN_SPEED, MOTOR_MAX_SPEED);
+      motor_Go(&motor, (current_mode > 3));
+
+      if((current_mode + 1) % 4 == 0){
+        eeprom_write(current_mode, motor.speed);
+      }
+    }
+
+    check_button(DOWN_BUTTON){
+
+      motor.speed -= 10;
+      motor.speed = clamp(motor.speed, MOTOR_MIN_SPEED, MOTOR_MAX_SPEED);
+      motor_Go(&motor, (current_mode > 3));
+
+      if((current_mode + 1) % 4 == 0){
+        eeprom_write(current_mode, motor.speed);
+      }
     }
 }

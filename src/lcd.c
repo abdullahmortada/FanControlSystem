@@ -64,13 +64,13 @@ void lcd_Send(uint8_t data, uint8_t mode)
 }
 
 
-void lcd_String (char* str)		
+void lcd_String (char* str, uint8_t len)		
 {
 	int i;
-	while(str[i])	lcd_Send(str[i++], 1);
+	while(i < len && str[i])	lcd_Send(str[i++], 1);
 }
 
-void lcd_StringXY (char* str, uint8_t row, uint8_t pos)	/* Send string to LCD with xy position */
+void lcd_StringXY (char* str, uint8_t len, uint8_t row, uint8_t pos)	/* Send string to LCD with xy position */
 {
 	if (row == 0 && pos<16)
 	  lcd_Send((pos & 0x0F)|0x80, 0);	
@@ -78,7 +78,7 @@ void lcd_StringXY (char* str, uint8_t row, uint8_t pos)	/* Send string to LCD wi
 	else if (row == 1 && pos<16)
 	  lcd_Send((pos & 0x0F)|0xC0, 0);	 
     
-	lcd_String(str);
+	lcd_String(str, len);
 }
 
 void lcd_Clear()
