@@ -27,11 +27,11 @@
 #define I2C_READ_ACK	1
 #define I2C_READ_NACK	0
 
-#define TWCR *__SFR_8(0xBC)
-#define TWDR *__SFR_8(0xBB)
-#define TWAR *__SFR_8(0xBA)
-#define TWSR *__SFR_8(0xB9)
-#define TWBR *__SFR_8(0xB8)
+// #define TWCR *__SFR_8(0xBC)
+// #define TWDR *__SFR_8(0xBB)
+// #define TWAR *__SFR_8(0xBA)
+// #define TWSR *__SFR_8(0xB9)
+// #define TWBR *__SFR_8(0xB8)
 
 #define TWINT 7
 #define TWEA 6

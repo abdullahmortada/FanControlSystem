@@ -94,7 +94,7 @@ void i2c_Init(i2c_freq_mode_t i2c_freq_mode, bool pullup_en)
 	{
 		PORTC &= ~((1 << I2C_SDA_PIN) | (1 << I2C_SCL_PIN));
 	}
-	DDRC  &= ~((1 << I2C_SDA_PIN) | (1 << I2C_SCL_PIN));
+	// DDRC  &= ~((1 << I2C_SDA_PIN) | (1 << I2C_SCL_PIN));
 	
 	switch (i2c_freq_mode)
 	{
@@ -118,6 +118,7 @@ void i2c_Init(i2c_freq_mode_t i2c_freq_mode, bool pullup_en)
 		
 		default: break;
 	}
+  TWCR = 1<<TWEN;
 }
 
 

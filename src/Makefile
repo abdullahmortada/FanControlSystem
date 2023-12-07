@@ -19,7 +19,7 @@ testADC:
 	rm main.bin main.hex main.o
 
 testLCD:
-	$(cc) $(options) uart.c lcd.c lcdTest.c -o main.o
+	$(cc) $(options) uart.c lcd.c i2c.c twi.c lcdTest.c -o main.o
 	$(cc) -o main.bin main.o 
 	$(copier) -O ihex -R .eeprom main.bin main.hex 
 	sudo $(flash) $(flashOptions)
@@ -34,6 +34,13 @@ testTimer:
 
 testEeprom:
 	$(cc) $(options) uart.c eeprom.c eepromTest.c -o main.o
+	$(cc) -o main.bin main.o 
+	$(copier) -O ihex -R .eeprom main.bin main.hex 
+	sudo $(flash) $(flashOptions)
+	rm main.bin main.hex main.o
+
+testRTC:
+	$(cc) $(options) uart.c rtc.c i2c.c helpers.c rtcTest.c -o main.o
 	$(cc) -o main.bin main.o 
 	$(copier) -O ihex -R .eeprom main.bin main.hex 
 	sudo $(flash) $(flashOptions)

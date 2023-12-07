@@ -24,10 +24,12 @@ int main(){
   char str[6];
 
   while (1){
-    itoa(adc_ReadChannel(0), str, 10);
+    int a = adc_ReadChannel(0);
+    double vout = a * (1100.0/1024);
+    itoa(vout / 10, str, 10);
     uart_SendString(str);
     uart_Transmit('\n');
     
-    _delay_ms(400);
+    _delay_ms(1000);
   }
 }

@@ -7,11 +7,11 @@
 int main() {
     uart_Init(9600);
     lcd_Init();
-    assert(RS_EN_Dir & (1 << RS) != 0);
-    uart_SendString("RS and EN pins are set correctly for LCD initialization\n");
-
-    DDRD |= 1<<PD3;
-    PORTD |= 1<<PD3;
+    // lcd_Send(LCD_BACKLIGHT, 0);
+    // _delay_ms(3000);
+    // lcd_Send(LCD_CLEAR, 0);
+    lcd_Send('a', 1);
+    _delay_ms(3000);
 
     while (1) {
       char testString[] = "LCD Test";

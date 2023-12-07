@@ -44,26 +44,36 @@
 #include "util/delay.h"
 
 int main(){
-  *DDRD |= 1 << 6;
+  *DDRD |= 1 << 6 | 1<<7 | 1<<5;
+    dio_SetBit(PORTD, 5, 1);
   while(1){
-    // for (int i = 0; i < 255; i++){
-    // pwm_DutyCycle(PWM_PD6, i);
-    // _delay_ms(100);
-    // }
-    // for (int i = 255; i > 0; i--){
-    // pwm_DutyCycle(PWM_PD6, i);
-    // _delay_ms(100);
-    // }
+    for (int i = 100; i < 255; i = i + 20){
+    pwm_DutyCycle(PWM_PD6, i);
+    _delay_ms(1000);
+    }
+    for (int i = 255; i > 100; i = i - 20){
+    pwm_DutyCycle(PWM_PD6, i);
+    _delay_ms(1000);
+    }
 
-    *PORTB = 0;
-    _delay_ms(1000);
-    pwm_DutyCycle(PWM_PD6, 0);
-    _delay_ms(1000);
-    pwm_DutyCycle(PWM_PD6, 75);
-    _delay_ms(1000);
-    pwm_DutyCycle(PWM_PD6, 130);
-    _delay_ms(1000);
-    pwm_DutyCycle(PWM_PD6, 200);
-    _delay_ms(1000);
+    // dio_SetBit(DDRD, 7, 1);
+    // pwm_DutyCycle(PWM_PD6, 100);
+    // _delay_ms(4000);
+    // pwm_DutyCycle(PWM_PD6, 150);
+    // _delay_ms(4000);
+    // pwm_DutyCycle(PWM_PD6, 200);
+    // _delay_ms(4000);
+    // pwm_DutyCycle(PWM_PD6, 255);
+    // _delay_ms(4000);
+
+    // pwm_DutyCycle(PWM_PD6, 0);
+    // dio_SetBit(DDRD, 5, 1);
+    // _delay_ms(1000);
+    // pwm_DutyCycle(PWM_PD6, 75);
+    // _delay_ms(1000);
+    // pwm_DutyCycle(PWM_PD6, 130);
+    // _delay_ms(1000);
+    // pwm_DutyCycle(PWM_PD6, 200);
+    // _delay_ms(1000);
   }
 }

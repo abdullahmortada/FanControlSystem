@@ -10,8 +10,10 @@ typedef enum {
 } tenuDirection;
 
 struct MOTOR_STRUCT{
-  struct PWM_PIN pin1;
-  struct PWM_PIN pin2;
+  struct PWM_PIN en;
+  uint8_t pin1;
+  uint8_t pin2;
+  volatile uint8_t* ddr;
 };
 
 void motor_Init(struct MOTOR_STRUCT* motor);
